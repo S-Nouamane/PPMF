@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Register</title>
+    <script>
+        function toggleShareData() {
+            const userType = document.getElementById('user_type').value;
+            const shareDataSection = document.getElementById('share_data_section');
+            const schoolSection = document.getElementById('school_section');
+            const fieldOfStudySection = document.getElementById('field_of_study_section');
+            shareDataSection.style.display = userType === 'alumni' ? 'block' : 'none';
+            schoolSection.style.display = userType === 'alumni' ? 'block' : 'none';
+            fieldOfStudySection.style.display = userType === 'alumni' ? 'block' : 'none';
+        }
+    </script>
 </head>
 <body>
     <header>
@@ -23,18 +34,34 @@
         
         <!-- Nouveau champ pour le type d'utilisateur -->
         <label for="user_type">I am a:</label>
-        <select name="user_type" id="user_type" required>
+        <select name="user_type" id="user_type" required onchange="toggleShareData()">
             <option value="alumni">Alumni</option>
             <option value="student">Student</option>
         </select>
     
-        <!-- Nouveau champ pour le partage des données -->
-        <label for="share_data">
-            <input type="checkbox" name="share_data" id="share_data"> I agree to share my data with other alumni.
-        </label>
+        <!-- Section pour l'école, visible uniquement pour les alumni -->
+        <div id="school_section" style="display: none;">
+            <input type="text" name="school" placeholder="School Name" required>
+        </div>
+
+        <!-- Section pour le domaine d'études, visible uniquement pour les alumni -->
+        <div id="field_of_study_section" style="display: none;">
+            <input type="text" name="field_of_study" placeholder="Field of Study (e.g., Engineering)" required>
+        </div>
+
+        <!-- Section pour le partage des données, visible uniquement pour les alumni -->
+ <div id="share_data_section" style="display: none;">
+            <label for="share_data">
+                <input type="checkbox" name="share_data" id="share_data"> I agree to share my data with other alumni.
+            </label>
+        </div>
     
         <button type="submit">Register</button>
     </form>
+
+    <script>
+        // Initialiser l'affichage des sections
+        toggleShareData();
+    </script>
 </body>
 </html>
-

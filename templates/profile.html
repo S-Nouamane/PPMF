@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Profile</title>
 </head>
 <body>
@@ -23,9 +24,14 @@
         <p><strong>Current Position:</strong> {{ user.current_position }}</p>
         <p><strong>Post-prepa Journey:</strong></p>
         <p>{{ user.prep_course }}</p>
+        
+        {% if user.user_type == 'alumni' %}
+            <p><strong>School:</strong> {{ user.school }}</p>
+            <p><strong>Field of Study:</strong> {{ user.field_of_study }}</p>
+        {% endif %}
 
         <h2>Edit Profile</h2>
-        <form action="/profile/{{ user.id }}" method="POST">
+        <form action="/profile/{{ user.id }}" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="_method" value="PUT">
             <label for="phone">Phone:</label>
             <input type="text" id="phone" name="phone" value="{{ user.phone }}" required>
@@ -42,7 +48,18 @@
             <label for="prep_course">Post-prepa Journey:</label>
             <textarea id="prep_course" name="prep_course">{{ user.prep_course }}</textarea>
 
-            <button type="submit">Save Changes</button>
+            {% if user.user_type == 'alumni' %}
+                <label for="school">School:</label>
+                <input type="text" id="school" name="school" value="{{ user.school }}">
+
+                <label for="field_of_study">Field of Study:</label>
+                <input type="text" id="field_of_study" name="field_of_study" value="{{ user.field_of_study }}">
+            {% endif %}
+
+            <label for="profile_picture">Profile Picture:</label>
+            <input type="file" id="profile_picture" name="profile_picture">
+
+            <button type="submit">Update Profile</button>
         </form>
     </main>
 </body>

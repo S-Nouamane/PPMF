@@ -6,6 +6,24 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Ajout de Font Awesome -->
     <title>Dashboard</title>
+    <style>
+        .profile-container {
+            display: flex;
+            align-items: center; /* Aligne verticalement l'image et le texte */
+            margin-bottom: 20px; /* Espace entre les sections */
+        }
+        .profile-container img {
+            margin-right: 20px; /* Espace entre l'image et le texte */
+        }
+        .alumni-container {
+            display: flex;
+            align-items: center; /* Aligne verticalement l'image et le texte */
+            margin-bottom: 10px; /* Espace entre les alumni */
+        }
+        .alumni-container img {
+            margin-right: 10px; /* Espace entre l'image et le texte */
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -17,56 +35,69 @@
     </header>
     <main>
         <h2>Welcome, {{ user.first_name }} {{ user.last_name }}</h2>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Phone:</strong> {{ user.phone }}</p>
-        <p><strong>User Type:</strong> {{ user.user_type }}</p>
-        <p><strong>Current Position:</strong> {{ user.current_position }}</p>
         
-        <p><strong>LinkedIn:</strong> 
-            {% if user.linkedin %}
-                <a href="{{ user.linkedin }}" target="_blank">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-            {% else %}
-                N/A
-            {% endif %}
-        </p>
-        
-        <p><strong>Social Media:</strong> 
-            {% if user.social_media %}
-                <a href="{{ user.social_media }}" target="_blank">
-                    <i class="fab fa-facebook"></i> <!-- Remplacez par l'icône appropriée -->
-                </a>
-            {% else %}
-                N/A
-            {% endif %}
-        </p>
-
-        <h2>Alumni Sharing Their Data</h2>
-        <ul>
-            {% for alumni in alumni %}
-                <li>
-                    <strong>{{ alumni.first_name }} {{ alumni.last_name }}</strong><br>
-                    <strong>Email:</strong> {{ alumni.email }}<br>
-                    <strong>Phone:</strong> {{ alumni.phone }}<br>
-                    <strong>Current Position:</strong> {{ alumni.current_position }}<br>
-                    <strong>LinkedIn:</strong> 
-                    {% if alumni.linkedin %}
-                        <a href="{{ alumni.linkedin }}" target="_blank">
+        <!-- Afficher la photo de profil de l'utilisateur -->
+        <div class="profile-container">
+            <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='uploads/default_profile.png') }}" alt="Profile Picture" width="200">
+            <div>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Phone:</strong> {{ user.phone }}</p>
+                <p><strong>User Type:</strong> {{ user.user_type }}</p>
+                <p><strong>Current Position:</strong> {{ user.current_position }}</p>
+                
+                <p><strong>LinkedIn:</strong> 
+                    {% if user.linkedin %}
+                        <a href="{{ user.linkedin }}" target="_blank">
                             <i class="fab fa-linkedin"></i>
                         </a>
                     {% else %}
                         N/A
                     {% endif %}
-                    <br>
-                    <strong>Social Media:</strong> 
-                    {% if alumni.social_media %}
-                        <a href="{{ alumni.social_media }}" target="_blank">
+                </p>
+                
+                <p><strong>Social Media:</strong> 
+                    {% if user.social_media %}
+                        <a href="{{ user.social_media }}" target="_blank">
                             <i class="fab fa-facebook"></i> <!-- Remplacez par l'icône appropriée -->
                         </a>
                     {% else %}
                         N/A
                     {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <h2>Alumni Sharing Their Data</h2>
+        <ul>
+            {% for alumni in alumni %}
+                <li class="alumni-container">
+                    <!-- Afficher la photo de profil de l'alumni -->
+                    <img src="{{ alumni.profile_picture if alumni.profile_picture else url_for('static', filename='uploads/default_profile.png') }}" alt="Profile Picture" width="100">
+                    <div>
+                        <strong>{{ alumni.first_name }} {{ alumni.last_name }}</strong><br>
+                        <strong>Email:</strong> {{ alumni.email }}<br>
+                        <strong>Phone:</strong> {{ alumni.phone }}<br>
+                        <strong>Current Position:</strong> {{ alumni.current_position }}<br>
+                        <strong>School:</strong> {{ alumni.school }}<br>
+                        <strong>Field of Study:</strong> {{ alumni.field_of_study }}<br>
+                        <strong>LinkedIn:</strong> 
+                        {% if alumni.linkedin %}
+                            <a href="{{ alumni.linkedin }}" target="_blank">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                        <br>
+                        <strong>Social Media:</strong> 
+                        {% if alumni.social_media %}
+                            <a href="{{ alumni.social_media }}" target="_blank">
+                                <i class="fab fa-facebook"></i> <!-- Remplacez par l'icône appropriée -->
+                            </a>
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
                 </li>
                 <hr>
             {% endfor %}

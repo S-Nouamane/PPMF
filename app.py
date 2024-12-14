@@ -1,11 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from werkzeug.exceptions import BadRequest
+import os 
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///alumni.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'static/uploads/'  # Dossier pour stocker les images
 
 db = SQLAlchemy(app)
 
@@ -22,7 +26,10 @@ class User(db.Model):
     current_position = db.Column(db.String(200), nullable=True)
     prep_course = db.Column(db.Text, nullable=True)
     user_type = db.Column(db.String(10), nullable=False)
-    share_data = db.Column(db.Boolean, default=False)
+    share_data = db.Column(db.Boolean, default=False)  # Champ pour le partage des données
+    school = db.Column(db.String(100), nullable=True)  # Nouveau champ pour l'école
+    field_of_study = db.Column(db.String(100), nullable=True)  # Nouveau champ pour le domaine d'études
+    profile_picture = db.Column(db.String(200), nullable=True)  # Champ pour la photo de profil
 # Routes
 @app.route('/')
 def home():
@@ -41,7 +48,14 @@ def register():
         current_position = request.form.get('current_position')
         prep_course = request.form.get('prep_course')
         user_type = request.form['user_type']
-        share_data = 'share_data' in request.form  # Vérifier si la case est cochée
+        school = request.form.get('school') if user_type == 'alumni' else None
+        field_of_study = request.form.get('field_of_study') if user_type == 'alumni' else None
+        
+        # Vérifier si l'utilisateur est un alumni et s'il a choisi de partager ses données
+        if user_type == 'alumni':
+            share_data = 'share_data' in request.form  # Vérifier si la case est cochée
+        else:
+            share_data = False  # Les étudiants ne partagent pas de données
         
         new_user = User(
             first_name=first_name,
@@ -54,14 +68,17 @@ def register():
             current_position=current_position,
             prep_course=prep_course,
             user_type=user_type,
-            share_data=share_data  # Enregistrer le choix de partage des données
+            share_data=share_data,  # Enregistrer le choix de partage des données
+            school=school,  # Enregistrer le nom de l'école
+            field_of_study=field_of_study  # Enregistrer le domaine d'études
         )
         try:
             db.session.add(new_user)
             db.session.commit()
             return redirect(url_for('login'))
         except Exception as e:
-            return f"Error: {str(e)}"
+            return f"An error occurred: {e}"
+
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -79,9 +96,6 @@ def login():
 
 @app.route('/profile/<int:user_id>', methods=['GET', 'POST'])
 def profile(user_id):
-    if 'user_id' not in session or session['user_id'] != user_id:
-        return redirect(url_for('login'))
-    
     user = User.query.get(user_id)
     if request.method == 'POST':
         user.phone = request.form['phone']
@@ -89,10 +103,26 @@ def profile(user_id):
         user.social_media = request.form['social_media']
         user.current_position = request.form['current_position']
         user.prep_course = request.form['prep_course']
+        user.school = request.form.get('school')
+        user.field_of_study = request.form.get('field_of_study')
+
+        # Gestion du téléchargement de la photo de profil
+        if 'profile_picture' in request.files:
+            file = request.files['profile_picture']
+            if file and allowed_file(file.filename):  # Vérifiez si le fichier est autorisé
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                user.profile_picture = url_for('static', filename='uploads/' + filename)
+            else:
+                raise BadRequest("Invalid file type. Only images are allowed.")
+
         db.session.commit()
         return redirect(url_for('profile', user_id=user.id))
-    
+
     return render_template('profile.html', user=user)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 @app.route('/dashboard')
 def dashboard():
