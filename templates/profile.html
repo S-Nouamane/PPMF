@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <title>Profile</title>
+</head>
+<body>
+    <header>
+        <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Profile Details</h2>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ user.phone }}</p>
+        <p><strong>LinkedIn:</strong> <a href="{{ user.linkedin }}" target="_blank">{{ user.linkedin }}</a></p>
+        <p><strong>Social Media:</strong> {{ user.social_media }}</p>
+        <p><strong>Current Position:</strong> {{ user.current_position }}</p>
+        <p><strong>Post-prepa Journey:</strong></p>
+        <p>{{ user.prep_course }}</p>
+
+        <h2>Edit Profile</h2>
+        <form action="/profile/{{ user.id }}" method="POST">
+            <input type="hidden" name="_method" value="PUT">
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" value="{{ user.phone }}" required>
+
+            <label for="linkedin">LinkedIn:</label>
+            <input type="text" id="linkedin" name="linkedin" value="{{ user.linkedin }}">
+
+            <label for="social_media">Social Media:</label>
+            <input type="text" id="social_media" name="social_media" value="{{ user.social_media }}">
+
+            <label for="current_position">Current Position:</label>
+            <input type="text" id="current_position" name="current_position" value="{{ user.current_position }}">
+
+            <label for="prep_course">Post-prepa Journey:</label>
+            <textarea id="prep_course" name="prep_course">{{ user.prep_course }}</textarea>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </main>
+</body>
+</html>

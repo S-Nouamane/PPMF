@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Register</title>
+</head>
+<body>
+    <header>
+        <h1>Register</h1>
+    </header>
+    <form action="/register" method="POST">
+        <input type="text" name="first_name" placeholder="First Name" required>
+        <input type="text" name="last_name" placeholder="Last Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="phone" placeholder="Phone" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="text" name="linkedin" placeholder="LinkedIn">
+        <input type="text" name="social_media" placeholder="Social Media">
+        <input type="text" name="current_position" placeholder="Current Position">
+        <textarea name="prep_course" placeholder="Post-prepa Journey"></textarea>
+        
+        <!-- Nouveau champ pour le type d'utilisateur -->
+        <label for="user_type">I am a:</label>
+        <select name="user_type" id="user_type" required>
+            <option value="alumni">Alumni</option>
+            <option value="student">Student</option>
+        </select>
+    
+        <!-- Nouveau champ pour le partage des données -->
+        <label for="share_data">
+            <input type="checkbox" name="share_data" id="share_data"> I agree to share my data with other alumni.
+        </label>
+    
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>
+
