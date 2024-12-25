@@ -81,6 +81,16 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/delete_account/<int:user_id>', methods=['POST'])
+def delete_account(user_id):
+    user = User.query.get(user_id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        session.clear()  # Déconnexion de l'utilisateur après la suppression
+        return redirect(url_for('home'))
+    return "Utilisateur non trouvé.", 404
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

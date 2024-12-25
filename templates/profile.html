@@ -61,6 +61,10 @@
 
             <button type="submit">Update Profile</button>
         </form>
+        <h2>Supprimer Mon Compte</h2>
+        <form action="/delete_account/{{ user.id }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.');">
+            <button type="submit" style="background-color: red; color: white;">Supprimer Mon Compte</button>
+        </form>
     </main>
 </body>
 </html>
